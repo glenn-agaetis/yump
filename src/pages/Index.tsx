@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, MessageSquare, Heart, Droplets, Users, TreePine } from "lucide-react";
+import { Calendar, MessageSquare, Heart, Droplets, Users, TreePine, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -9,6 +9,7 @@ const features = [
   { icon: MessageSquare, title: "Raise Complaints", desc: "Report village issues & get them resolved", link: "/complaints" },
   { icon: Heart, title: "Donate & Support", desc: "Help YUMP serve the community better", link: "/donations" },
   { icon: Droplets, title: "Blood Donors", desc: "Find blood donors from our village instantly", link: "/blood-donors" },
+  { icon: Camera, title: "Photo Gallery", desc: "Browse moments from village life and events", link: "/gallery" },
 ];
 
 const upcomingEvents = [
