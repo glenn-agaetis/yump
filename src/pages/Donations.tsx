@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, QrCode, IndianRupee } from "lucide-react";
+import { Heart, QrCode, Gift, Users, Calendar } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useQuery } from "@tanstack/react-query";
@@ -10,13 +10,19 @@ const Donations = () => {
   const upiId = settings?.upi_id || "yump@upi";
   const qrCodeUrl = settings?.qr_code_url;
 
-  const { data: donors = [] } = useQuery({
-    queryKey: ["donors"],
+  const { data: donorCount = 0 } = useQuery({
+    queryKey: ["donors-count"],
     queryFn: async () => {
-      const { data } = await supabase.from("donors").select("*").order("created_at", { ascending: false });
-      return data || [];
+      const { count } = await supabase.from("donors").select("*", { count: "exact", head: true });
+      return count || 0;
     },
   });
+
+  const causes = [
+    { icon: Gift, title: "Christmas Celebrations", description: "Help us organize community Christmas events with gifts, food, and joy for everyone in the village." },
+    { icon: Users, title: "Community Development", description: "Support infrastructure improvements, educational programs, and welfare initiatives for our village." },
+    { icon: Calendar, title: "Cultural Events", description: "Fund traditional festivals, sports events, and cultural programs that bring our community together." },
+  ];
 
   return (
     <div className="py-16">
@@ -50,39 +56,46 @@ const Donations = () => {
               <p className="text-sm text-muted-foreground mb-1">UPI ID</p>
               <p className="font-bold text-lg text-secondary">{upiId}</p>
             </div>
+            <p className="text-sm text-muted-foreground mt-4">
+              <span className="font-semibold text-primary">{donorCount}+</span> generous donors have contributed so far
+            </p>
           </motion.div>
 
-          {/* Donor list */}
+          {/* What your donation supports */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 card-shadow"
+            className="space-y-5"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <IndianRupee className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold">Our Generous Donors</h3>
-            </div>
-            <div className="space-y-3">
-              {donors.map((d, i) => (
-                <motion.div
-                  key={d.id}
-                  initial={{ opacity: 0, x: 10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-center justify-between p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                      {d.name[0]}
-                    </div>
-                    <span className="font-semibold">{d.name}</span>
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Heart className="w-5 h-5 text-primary" /> What Your Donation Supports
+            </h3>
+            {causes.map((cause, i) => (
+              <motion.div
+                key={cause.title}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-card rounded-2xl p-6 card-shadow hover:card-shadow-hover transition-all duration-300"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <cause.icon className="w-6 h-6" />
                   </div>
-                  <span className="font-bold text-primary">{d.amount}</span>
-                </motion.div>
-              ))}
-              {donors.length === 0 && <p className="text-muted-foreground text-center py-4">No donors yet.</p>}
+                  <div>
+                    <h4 className="font-bold text-lg mb-1">{cause.title}</h4>
+                    <p className="text-sm text-muted-foreground">{cause.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            <div className="bg-muted/50 rounded-2xl p-6 text-center">
+              <p className="text-muted-foreground text-sm">
+                Every contribution, big or small, makes a difference. Thank you for supporting our village community! 🙏
+              </p>
             </div>
           </motion.div>
         </div>
