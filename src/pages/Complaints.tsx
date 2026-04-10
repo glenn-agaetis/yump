@@ -7,31 +7,47 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-const issueTypes = [
-  "Street Light",
-  "Mosquito",
-  "Trees",
-  "Cleanliness",
-  "Emergency",
-  "Personal",
-  "Other",
-];
+const issueTypes = ["Street Light", "Mosquito", "Trees", "Cleanliness", "Emergency", "Personal", "Other"];
 
 const Complaints = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [issueType, setIssueType] = useState("");
+  const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!issueType || !description) return;
     setLoading(true);
-    // Simulate submission (will connect to Supabase later)
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      let imageUrl: string | null = null;
+      if (imageFile) {
+        const path = `${Date.now()}-${imageFile.name}`;
+        await supabase.storage.from("complaints").upload(path, imageFile);
+        const { data: urlData } = supabase.storage.from("complaints").getPublicUrl(path);
+        imageUrl = urlData.publicUrl;
+      }
+
+      const { error } = await supabase.from("complaints").insert({
+        name: name || null,
+        issue_type: issueType,
+        description,
+        image_url: imageUrl,
+      });
+
+      if (error) throw error;
       setSubmitted(true);
       toast({ title: "Complaint Submitted!", description: "We will look into your issue soon." });
-    }, 1000);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+    setLoading(false);
   };
 
   if (submitted) {
@@ -43,7 +59,7 @@ const Complaints = () => {
           </motion.div>
           <h2 className="text-2xl font-bold mb-2">Thank You!</h2>
           <p className="text-muted-foreground mb-6">Your complaint has been submitted. We will address it soon.</p>
-          <Button onClick={() => setSubmitted(false)}>Submit Another</Button>
+          <Button onClick={() => { setSubmitted(false); setName(""); setIssueType(""); setDescription(""); setImageFile(null); }}>Submit Another</Button>
         </div>
       </div>
     );
@@ -62,18 +78,18 @@ const Complaints = () => {
         >
           <div>
             <label className="block text-sm font-semibold mb-1.5">Your Name (Optional)</label>
-            <Input placeholder="Enter your name" />
+            <Input placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} />
           </div>
 
           <div>
             <label className="block text-sm font-semibold mb-1.5">Issue Type *</label>
-            <Select required>
+            <Select value={issueType} onValueChange={setIssueType} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select issue type" />
               </SelectTrigger>
               <SelectContent>
                 {issueTypes.map(type => (
-                  <SelectItem key={type} value={type.toLowerCase().replace(/ /g, "_")}>{type}</SelectItem>
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -81,15 +97,15 @@ const Complaints = () => {
 
           <div>
             <label className="block text-sm font-semibold mb-1.5">Description *</label>
-            <Textarea placeholder="Describe the issue in detail..." rows={4} required />
+            <Textarea placeholder="Describe the issue in detail..." rows={4} required value={description} onChange={e => setDescription(e.target.value)} />
           </div>
 
           <div>
             <label className="block text-sm font-semibold mb-1.5">Upload Image (Optional)</label>
-            <Input type="file" accept="image/*" />
+            <Input type="file" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] || null)} />
           </div>
 
-          <Button type="submit" size="lg" className="w-full text-base font-bold" disabled={loading}>
+          <Button type="submit" size="lg" className="w-full text-base font-bold" disabled={loading || !issueType || !description}>
             <Send className="w-4 h-4 mr-2" />
             {loading ? "Submitting..." : "Submit Complaint"}
           </Button>
