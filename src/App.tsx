@@ -10,6 +10,7 @@ import Events from "./pages/Events";
 import Complaints from "./pages/Complaints";
 import Donations from "./pages/Donations";
 import BloodDonors from "./pages/BloodDonors";
+import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/complaints" element={<Complaints />} />
               <Route path="/donations" element={<Donations />} />
               <Route path="/blood-donors" element={<BloodDonors />} />
+              <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

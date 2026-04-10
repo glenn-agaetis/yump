@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Heart, Home, Calendar, MessageSquare, CreditCard, Droplets, Phone } from "lucide-react";
+import { Menu, X, Heart, Home, Calendar, MessageSquare, CreditCard, Droplets, Phone, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { path: "/complaints", label: "Complaints", icon: MessageSquare },
   { path: "/donations", label: "Donations", icon: CreditCard },
   { path: "/blood-donors", label: "Blood Donors", icon: Droplets },
+  { path: "/gallery", label: "Gallery", icon: Camera },
   { path: "/contact", label: "Contact", icon: Phone },
 ];
 

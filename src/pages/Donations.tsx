@@ -27,16 +27,18 @@ const Donations = () => (
             <QrCode className="w-7 h-7" />
           </div>
           <h3 className="text-xl font-bold mb-4">Scan & Pay to Support YUMP</h3>
-          <div className="w-48 h-48 bg-muted rounded-xl mx-auto mb-4 flex items-center justify-center border-2 border-dashed border-border">
-            <div className="text-center text-muted-foreground text-sm">
-              <QrCode className="w-16 h-16 mx-auto mb-2 opacity-40" />
-              <p>UPI QR Code</p>
+          <div className="w-56 h-56 bg-muted rounded-2xl mx-auto mb-4 flex items-center justify-center border-2 border-dashed border-border overflow-hidden">
+            <div className="text-center text-muted-foreground text-sm p-4">
+              <QrCode className="w-20 h-20 mx-auto mb-2 opacity-40" />
+              <p className="font-medium">Upload your real QR code</p>
+              <p className="text-xs mt-1 opacity-70">Replace this placeholder with your UPI QR image</p>
             </div>
           </div>
-          <div className="bg-muted rounded-xl p-4">
+          <div className="bg-muted rounded-xl p-4 mb-3">
             <p className="text-sm text-muted-foreground mb-1">UPI ID</p>
-            <p className="font-bold text-lg text-primary">yump@upi</p>
+            <p className="font-bold text-lg text-secondary">yump@upi</p>
           </div>
+          <p className="text-xs text-muted-foreground">You can send your real QR code image in chat and I'll add it here</p>
         </motion.div>
 
         {/* Donor list */}
