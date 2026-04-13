@@ -14,8 +14,8 @@ const BloodDonors = () => {
   const { data: donorsList = [] } = useQuery({
     queryKey: ["blood-donors"],
     queryFn: async () => {
-      const { data } = await supabase.from("blood_donors").select("*").order("created_at", { ascending: false });
-      return data || [];
+      const { data } = await supabase.rpc("get_public_blood_donors");
+      return (data as any[]) || [];
     },
   });
 
