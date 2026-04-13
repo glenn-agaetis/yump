@@ -202,6 +202,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_blood_donors: {
+        Args: never
+        Returns: {
+          blood_group: string
+          id: string
+          name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
